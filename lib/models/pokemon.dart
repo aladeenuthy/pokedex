@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 class Pokemon {
   final int id;
   final String name;
@@ -6,8 +7,19 @@ class Pokemon {
   final String imageUrl;
   final List<String> types;
   final List<Stat> stats;
+  final Color color;
   bool isFavorite;
-  Pokemon({required this.id,required this.name, required this.height, required this.weight, required this.imageUrl, required this.types, required this.stats, required this.isFavorite});
+  Pokemon(
+      {required this.id,
+      required this.name,
+      required this.height,
+      required this.weight,
+      required this.imageUrl,
+      required this.types,
+      required this.stats,
+      required this.color,
+      required this.isFavorite,
+      });
 }
 
 class Stat {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pokedex/utils/utilities.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pokedex/models/pokemon.dart';
 import 'package:dio/dio.dart';
@@ -6,6 +7,9 @@ import 'package:dio/dio.dart';
 class Pokemons with ChangeNotifier {
   final List<Pokemon> _pokemons = [];
   Future<void> fetchFromApi() async {
+    if (_pokemons.isNotEmpty) {
+      return;
+    }
     const url = 'https://pokeapi.co/api/v2/pokemon?limit=20';
     final response = await Dio().get(url);
     final List<dynamic> responseData = response.data['results'];
@@ -14,6 +18,10 @@ class Pokemons with ChangeNotifier {
       _pokemons.add(pokemon);
     }
     notifyListeners();
+  }
+
+  List<Pokemon> get pokemons {
+    return [..._pokemons];
   }
 
   Future<Pokemon> getPokemonObj(String url) async {
@@ -31,16 +39,37 @@ class Pokemons with ChangeNotifier {
         )
         .toList();
     types = resTypes.map((type) => type['type']['name'] as String).toList();
+    final color = await getDominantColor(
+        responseData['sprites']['other']['official-artwork']['front_default']);
     return Pokemon(
         id: responseData['id'],
         name: responseData['name'],
         height: responseData['height'],
         weight: responseData['weight'],
         imageUrl: responseData['sprites']['other']['official-artwork']
-                ['front_default'] ??
-            '',
+            ['front_default'],
         types: types,
         stats: stats,
+        color: color ?? Colors.grey,
         isFavorite: prefs.getBool(responseData['name']) ?? false);
+  }
+
+  Future<void> toggleFavorites(String name) async {
+    final prefs = await SharedPreferences.getInstance();
+    final isFavorite = prefs.getBool(name) ?? false;
+    await prefs.setBool(name, !isFavorite);
+    final pokemon = _pokemons.firstWhere((element) => element.name == name);
+    pokemon.isFavorite = !isFavorite;
+    notifyListeners();
+  }
+
+  List<Pokemon> getFavorites() {
+    final _favoritePokemons =
+        _pokemons.where((element) => element.isFavorite == true);
+    return [..._favoritePokemons];
+  }
+
+  int get favoritiesLength {
+    return getFavorites().length;
   }
 }
