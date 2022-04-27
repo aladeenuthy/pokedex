@@ -21,6 +21,7 @@ class MyApp extends StatelessWidget {
       create: (_) => Pokemons(),
       child: MaterialApp(
         title: 'Flutter Demo',
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           textTheme: ThemeData.light().textTheme.copyWith(
             headline3: ThemeData.light().textTheme.headline3!.copyWith(

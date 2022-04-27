@@ -13,18 +13,20 @@ class AllPokemons extends StatefulWidget {
 }
 
 class _AllPokemonsState extends State<AllPokemons> {
-  Future? _fetchData;
+  late final Future _fetchData;
+
   @override
   void initState() {
-    _fetchData = Provider.of<Pokemons>(context, listen: false).fetchFromApi();
     super.initState();
+    _fetchData = Provider.of<Pokemons>(context, listen: false).fetchFromApi();
   }
 
   double getValue(SizingInformation sizingInformation, Orientation orientation,
       MediaQueryData mediaQuery) {
-    if (sizingInformation.deviceScreenType == DeviceScreenType.tablet ||
-        orientation == Orientation.landscape) {
-      return 1.0;
+    if (sizingInformation.deviceScreenType == DeviceScreenType.tablet) {
+      return 0.6;
+    } else if (orientation == Orientation.landscape) {
+      return 1.2;
     } else {
       return (mediaQuery.size.width / mediaQuery.size.height / 1.1);
     }
@@ -51,7 +53,7 @@ class _AllPokemonsState extends State<AllPokemons> {
                     const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                 crossAxisCount: sizingInformation.deviceScreenType ==
                         DeviceScreenType.tablet
-                    ? 5
+                    ? 4
                     : 3,
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,

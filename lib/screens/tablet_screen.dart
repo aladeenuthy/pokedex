@@ -53,10 +53,17 @@ class _TabletScreenState extends State<TabletScreen> {
               NavigationRail(
                 unselectedLabelTextStyle: const TextStyle(fontSize: 15),
                 selectedLabelTextStyle: const TextStyle(fontSize: 17, color: Color(0xFF3558CD)),
-                minWidth: constraints.maxWidth * 0.2,
+                minWidth: constraints.maxWidth * 0.15,
                 groupAlignment: 0.0,
                 labelType: NavigationRailLabelType.all,
                 destinations: [
+                  const NavigationRailDestination(
+                      icon: Text(""),
+                      label: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 2),
+                        child: RotatedBox(child: Text("All Pokemons"), quarterTurns: -1,),
+                      ),
+                      ),
                   NavigationRailDestination(icon: const Text(""), label: RotatedBox(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -78,13 +85,7 @@ class _TabletScreenState extends State<TabletScreen> {
                         ]),
                       quarterTurns: -1,
                     ), ),
-                  const NavigationRailDestination(
-                      icon: Text(""),
-                      label: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 2),
-                        child: RotatedBox(child: Text("All Pokemons"), quarterTurns: -1,),
-                      ),
-                      )
+                  
                 ],
                 selectedIndex: _index,
                 onDestinationSelected: (selectedIndex) {

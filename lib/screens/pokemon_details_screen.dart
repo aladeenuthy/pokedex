@@ -11,7 +11,7 @@ class PokemonDetailsScreen extends StatelessWidget {
 
   Widget buildAttribute(String name, String value, BuildContext context) {
     return SizedBox(
-      width: 50,
+      width: 90,
       child: Column(
         children: [
           Text(
@@ -35,7 +35,7 @@ class PokemonDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pokemon = ModalRoute.of(context)?.settings.arguments as Pokemon;
+    final pokemon = ModalRoute.of(context)!.settings.arguments as Pokemon;
 
     return Scaffold(
         body: CustomScrollView(

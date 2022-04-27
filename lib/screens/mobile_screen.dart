@@ -17,6 +17,8 @@ class MobileScreen extends StatefulWidget {
 class _MobileScreenState extends State<MobileScreen> {
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final orientation = mediaQuery.orientation;
     return DefaultTabController(
         length: 2,
         child: Scaffold(
@@ -54,7 +56,7 @@ class _MobileScreenState extends State<MobileScreen> {
                   ),
                   Tab(
                     child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisAlignment: orientation == Orientation.landscape ? MainAxisAlignment.center : MainAxisAlignment.start,
                         children: [
                           const Text(
                             "Favorite pokemons",

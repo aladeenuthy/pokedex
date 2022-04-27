@@ -17,19 +17,12 @@ class PokemonStat extends StatefulWidget {
 
 class _PokemonStatState extends State<PokemonStat>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<Offset> _slideAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
+  late final AnimationController  _controller = AnimationController(
         vsync: this,
         duration: Duration(milliseconds: ((widget.index + 1) * 200)));
-    _slideAnimation = Tween<Offset>(
+  late final Animation<Offset> _slideAnimation = Tween<Offset>(
             begin: const Offset(-1.5, 0), end: const Offset(0, 0))
         .animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
-  }
 
   @override
   void dispose() {

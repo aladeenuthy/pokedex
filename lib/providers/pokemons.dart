@@ -10,14 +10,17 @@ class Pokemons with ChangeNotifier {
     if (_pokemons.isNotEmpty) {
       return;
     }
-    const url = 'https://pokeapi.co/api/v2/pokemon?limit=20';
-    final response = await Dio().get(url);
-    final List<dynamic> responseData = response.data['results'];
-    for (var res in responseData) {
-      final pokemon = await getPokemonObj(res['url']);
-      _pokemons.add(pokemon);
+    try{
+      const url = 'https://pokeapi.co/api/v2/pokemon?limit=20';
+      final response = await Dio().get(url);
+      final List<dynamic> responseData = response.data['results'];
+      for (var res in responseData) {
+        final pokemon = await getPokemonObj(res['url']);
+        _pokemons.add(pokemon);
+      }
+      notifyListeners();
+    }catch(_){
     }
-    notifyListeners();
   }
 
   List<Pokemon> get pokemons {
@@ -56,7 +59,7 @@ class Pokemons with ChangeNotifier {
 
   Future<void> toggleFavorites(String name) async {
     final prefs = await SharedPreferences.getInstance();
-    final isFavorite = prefs.getBool(name) ?? false;
+    final isFavorite = prefs.getBool(name) ?? false ;
     await prefs.setBool(name, !isFavorite);
     final pokemon = _pokemons.firstWhere((element) => element.name == name);
     pokemon.isFavorite = !isFavorite;
