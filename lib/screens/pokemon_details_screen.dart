@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:pokedex/models/pokemon.dart';
 import 'package:pokedex/providers/pokemons.dart';
+import 'package:pokedex/utils/utilities.dart';
 import 'package:pokedex/widgets/pokemon_stat.dart';
 import 'package:provider/provider.dart';
 
@@ -36,7 +37,6 @@ class PokemonDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final pokemon = ModalRoute.of(context)!.settings.arguments as Pokemon;
-
     return Scaffold(
         body: CustomScrollView(
           slivers: [
@@ -63,10 +63,7 @@ class PokemonDetailsScreen extends StatelessWidget {
                             style: Theme.of(context).textTheme.headline3,
                           ),
                           Text(
-                              pokemon.types
-                                  .toString()
-                                  .replaceAll("[", '')
-                                  .replaceAll(']', ''),
+                              removeBraces(pokemon.types.toString()),
                               style: Theme.of(context).textTheme.headline4),
                           Expanded(
                             child: Container(),
@@ -119,8 +116,7 @@ class PokemonDetailsScreen extends StatelessWidget {
                         ...pokemon.stats.map((stat) {
                           var index = pokemon.stats.indexOf(stat);
                           return PokemonStat(
-                              statName: stat.name,
-                              statValue: stat.baseStat,
+                              stat: stat,
                               index: index);
                         }).toList()
                       ]),

@@ -2,24 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:pokedex/providers/pokemons.dart';
 import 'package:provider/provider.dart';
 import '../screens/pokemon_details_screen.dart';
+import '../utils/utilities.dart';
 import 'pokemon_card.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
 class FavoritePokemons extends StatelessWidget {
   const FavoritePokemons({Key? key}) : super(key: key);
-
-
-  double getValue(SizingInformation sizingInformation, Orientation orientation,
-      MediaQueryData mediaQuery) {
-    if (sizingInformation.deviceScreenType == DeviceScreenType.tablet) {
-      return 0.6;
-    } else if (orientation == Orientation.landscape) {
-      return 1.2;
-    } else {
-      return (mediaQuery.size.width / mediaQuery.size.height / 1.1);
-    }
-  }
-  
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
@@ -41,11 +29,7 @@ class FavoritePokemons extends StatelessWidget {
                           PokemonDetailsScreen.routeName,
                           arguments: pokemon),
                       child: PokemonCard(
-                        id: pokemon.id.toString(),
-                        name: pokemon.name,
-                        types: pokemon.types,
-                        imageUrl: pokemon.imageUrl,
-                        color: pokemon.color,
+                        pokemon: pokemon,
                       ),
                     ))
                 .toList()

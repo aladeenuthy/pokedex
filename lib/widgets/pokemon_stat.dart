@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
+import '../models/pokemon.dart';
+import '../utils/utilities.dart';
+
 class PokemonStat extends StatefulWidget {
-  final String statName;
-  final int statValue;
+  final Stat stat;
   final int index;
   const PokemonStat(
       {Key? key,
-      required this.statName,
-      required this.statValue,
+      required this.stat,
       required this.index})
       : super(key: key);
 
@@ -17,29 +18,17 @@ class PokemonStat extends StatefulWidget {
 
 class _PokemonStatState extends State<PokemonStat>
     with SingleTickerProviderStateMixin {
-  late final AnimationController  _controller = AnimationController(
-        vsync: this,
-        duration: Duration(milliseconds: ((widget.index + 1) * 200)));
-  late final Animation<Offset> _slideAnimation = Tween<Offset>(
-            begin: const Offset(-1.5, 0), end: const Offset(0, 0))
-        .animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
+  late final AnimationController _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: ((widget.index + 1) * 200)));
+  late final Animation<Offset> _slideAnimation =
+      Tween<Offset>(begin: const Offset(-1.5, 0), end: const Offset(0, 0))
+          .animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
 
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
-  }
-
-  Color getColor(double percentage) {
-    if (percentage < 0.25) {
-      return Colors.red;
-    } else if (percentage < 0.5) {
-      return Colors.orange;
-    } else if (percentage < 0.75) {
-      return Colors.yellow;
-    } else {
-      return Colors.green;
-    }
   }
 
   @override
@@ -53,7 +42,7 @@ class _PokemonStatState extends State<PokemonStat>
           Row(
             children: [
               Text(
-                widget.statName.toUpperCase(),
+                widget.stat.name.toUpperCase(),
                 style: Theme.of(context)
                     .textTheme
                     .bodyText1
@@ -63,7 +52,7 @@ class _PokemonStatState extends State<PokemonStat>
                 width: 5,
               ),
               Text(
-                widget.statValue.toString(),
+                widget.stat.baseStat.toString(),
                 style: Theme.of(context).textTheme.headline4,
               )
             ],
@@ -72,9 +61,9 @@ class _PokemonStatState extends State<PokemonStat>
             height: 7,
           ),
           LinearProgressIndicator(
-            value: (widget.statValue.toDouble() / 100),
+            value: (widget.stat.baseStat.toDouble() / 100),
             backgroundColor: Colors.grey[200],
-            color: getColor((widget.statValue.toDouble() / 100)),
+            color: getColor((widget.stat.baseStat.toDouble() / 100)),
           )
         ]),
       ),

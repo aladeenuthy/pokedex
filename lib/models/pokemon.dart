@@ -20,6 +20,30 @@ class Pokemon {
       required this.color,
       required this.isFavorite,
       });
+  factory Pokemon.fromJson(Map<String, dynamic> json, bool isFavorite, Color color){
+    List<Stat> stats = [];
+    List<String> types = [];
+    final List<Map<String, dynamic>> resStat = List<Map<String, dynamic>>.from(json['stats']);
+    final List<Map<String, dynamic>> resTypes = List<Map<String, dynamic>>.from(json['types']);
+    stats = resStat
+        .map(
+          (stat) =>
+              Stat(name: stat['stat']['name'], baseStat: stat['base_stat']),
+        )
+        .toList();
+    types = resTypes.map((type) => type['type']['name'] as String).toList();
+    return Pokemon(
+        id: json['id'],
+        name: json['name'],
+        height: json['height'],
+        weight: json['weight'],
+        imageUrl: json['sprites']['other']['official-artwork']
+            ['front_default'],
+        types: types,
+        stats: stats,
+        color: color ,
+        isFavorite: isFavorite);
+  }
 }
 
 class Stat {

@@ -4,6 +4,7 @@ import 'package:pokedex/providers/pokemons.dart';
 import 'package:pokedex/screens/pokemon_details_screen.dart';
 import 'package:pokedex/widgets/pokemon_card.dart';
 import 'package:provider/provider.dart';
+import 'package:pokedex/utils/utilities.dart';
 
 class AllPokemons extends StatefulWidget {
   const AllPokemons({Key? key}) : super(key: key);
@@ -12,42 +13,34 @@ class AllPokemons extends StatefulWidget {
   _AllPokemonsState createState() => _AllPokemonsState();
 }
 
-class _AllPokemonsState extends State<AllPokemons> {
+class _AllPokemonsState extends State<AllPokemons>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
   late final Future _fetchData;
-
   @override
   void initState() {
     super.initState();
-    _fetchData = Provider.of<Pokemons>(context, listen: false).fetchFromApi();
-  }
-
-  double getValue(SizingInformation sizingInformation, Orientation orientation,
-      MediaQueryData mediaQuery) {
-    if (sizingInformation.deviceScreenType == DeviceScreenType.tablet) {
-      return 0.6;
-    } else if (orientation == Orientation.landscape) {
-      return 1.2;
-    } else {
-      return (mediaQuery.size.width / mediaQuery.size.height / 1.1);
-    }
+    _fetchData = context.read<Pokemons>().fetchFromApi();
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final mediaQuery = MediaQuery.of(context);
     final orientation = mediaQuery.orientation;
-    return Consumer<Pokemons>(
-      builder: (context, pokemonObj, _) => FutureBuilder(
-          future: _fetchData,
-          builder: (context, snapShot) {
-            if (snapShot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(
-                  color: Color(0xFF3558CD),
-                ),
-              );
-            }
-            return ResponsiveBuilder(builder: (context, sizingInformation) {
+    return FutureBuilder(
+        future: _fetchData,
+        builder: (context, snapShot) {
+          if (snapShot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(
+                color: Color(0xFF3558CD),
+              ),
+            );
+          }
+          return ResponsiveBuilder(builder: (context, sizingInformation) {
+            return Consumer<Pokemons>(builder: (context, pokemonObj, _) {
               return GridView.count(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
@@ -66,18 +59,14 @@ class _AllPokemonsState extends State<AllPokemons> {
                                 PokemonDetailsScreen.routeName,
                                 arguments: pokemon),
                             child: PokemonCard(
-                              id: pokemon.id.toString(),
-                              name: pokemon.name,
-                              types: pokemon.types,
-                              imageUrl: pokemon.imageUrl,
-                              color: pokemon.color,
+                              pokemon: pokemon,
                             ),
                           ))
                       .toList()
                 ],
               );
             });
-          }),
-    );
+          });
+        });
   }
 }
