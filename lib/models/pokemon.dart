@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 class Pokemon {
   final int id;
   final String name;
@@ -7,7 +6,6 @@ class Pokemon {
   final String imageUrl;
   final List<String> types;
   final List<Stat> stats;
-  final Color color;
   bool isFavorite;
   Pokemon(
       {required this.id,
@@ -17,10 +15,9 @@ class Pokemon {
       required this.imageUrl,
       required this.types,
       required this.stats,
-      required this.color,
       required this.isFavorite,
       });
-  factory Pokemon.fromJson(Map<String, dynamic> json, bool isFavorite, Color color){
+  factory Pokemon.fromJson(Map<String, dynamic> json, bool isFavorite){
     List<Stat> stats = [];
     List<String> types = [];
     final List<Map<String, dynamic>> resStat = List<Map<String, dynamic>>.from(json['stats']);
@@ -41,7 +38,6 @@ class Pokemon {
             ['front_default'],
         types: types,
         stats: stats,
-        color: color ,
         isFavorite: isFavorite);
   }
 }
@@ -51,3 +47,5 @@ class Stat {
   final int baseStat;
   Stat({required this.name, required this.baseStat});
 }
+
+

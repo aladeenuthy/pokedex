@@ -6,11 +6,12 @@ import 'package:responsive_builder/responsive_builder.dart';
 Future<Color?> getDominantColor(String imageUrl) async {
   final PaletteGenerator paletteGenerator =
       await PaletteGenerator.fromImageProvider(
-          CachedNetworkImageProvider(imageUrl));
+          CachedNetworkImageProvider(imageUrl),
+          size: const Size(100, 100));
   return paletteGenerator.dominantColor?.color;
 }
 
-String removeBraces(String stringList) {
+String removeBrackets(String stringList) {
   return stringList.replaceAll('[', "").replaceAll("]", "");
 }
 

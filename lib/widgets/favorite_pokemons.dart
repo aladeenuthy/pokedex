@@ -13,28 +13,28 @@ class FavoritePokemons extends StatelessWidget {
     final mediaQuery = MediaQuery.of(context);
     final orientation = mediaQuery.orientation;
     final pokemons =
-        Provider.of<Pokemons>(context).getFavorites();
+        Provider.of<Pokemons>(context).favoritePokemons;
     return ResponsiveBuilder(
       builder: (context, sizingInformation) {
-        return GridView.count(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-          crossAxisCount: sizingInformation.deviceScreenType == DeviceScreenType.tablet ? 4 : 3,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-          childAspectRatio: getValue(sizingInformation, orientation, mediaQuery),
-          children: [
-            ...pokemons
-                .map((pokemon) => GestureDetector(
-                      onTap: () => Navigator.of(context).pushNamed(
-                          PokemonDetailsScreen.routeName,
-                          arguments: pokemon),
-                      child: PokemonCard(
-                        pokemon: pokemon,
-                      ),
-                    ))
-                .toList()
-          ],
-        );
+        return GridView.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount:
+                sizingInformation.deviceScreenType == DeviceScreenType.tablet
+                    ? 4
+                    : 3,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            childAspectRatio:
+                getValue(sizingInformation, orientation, mediaQuery)),
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        itemCount: pokemons.length,
+        itemBuilder: (_, index) => GestureDetector(
+          onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_)=> PokemonDetailsScreen(pokemon: pokemons[index]))),
+          child: PokemonCard(
+            pokemon: pokemons[index],
+          ),
+        ),
+      );
       }
     );
   }

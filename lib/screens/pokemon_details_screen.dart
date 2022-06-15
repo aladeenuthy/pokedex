@@ -6,9 +6,29 @@ import 'package:pokedex/utils/utilities.dart';
 import 'package:pokedex/widgets/pokemon_stat.dart';
 import 'package:provider/provider.dart';
 
-class PokemonDetailsScreen extends StatelessWidget {
+class PokemonDetailsScreen extends StatefulWidget {
+  final Pokemon pokemon;
   static const routeName = '/pokemon-details';
-  const PokemonDetailsScreen({Key? key}) : super(key: key);
+  const PokemonDetailsScreen({Key? key, required this.pokemon})
+      : super(key: key);
+
+  @override
+  State<PokemonDetailsScreen> createState() => _PokemonDetailsScreenState();
+}
+
+class _PokemonDetailsScreenState extends State<PokemonDetailsScreen> {
+  Color? color;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () async {
+      color = await getDominantColor(widget.pokemon.imageUrl);
+      setState(() {
+        
+      });
+    });
+  }
 
   Widget buildAttribute(String name, String value, BuildContext context) {
     return SizedBox(
@@ -36,17 +56,17 @@ class PokemonDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pokemon = ModalRoute.of(context)!.settings.arguments as Pokemon;
+    final pokemon = widget.pokemon;
     return Scaffold(
         body: CustomScrollView(
           slivers: [
             SliverAppBar(
-              backgroundColor: pokemon.color,
+              backgroundColor: color ?? Colors.grey[200],
               pinned: true,
               expandedHeight: 250,
               flexibleSpace: FlexibleSpaceBar(
                 background: Hero(
-                  tag: pokemon.id.toString(),
+                  tag: pokemon.id,
                   child: Container(
                     padding: const EdgeInsets.only(left: 20, bottom: 10),
                     alignment: Alignment.bottomLeft,
@@ -62,8 +82,7 @@ class PokemonDetailsScreen extends StatelessWidget {
                             pokemon.name,
                             style: Theme.of(context).textTheme.headline3,
                           ),
-                          Text(
-                              removeBraces(pokemon.types.toString()),
+                          Text(removeBrackets(pokemon.types.toString()),
                               style: Theme.of(context).textTheme.headline4),
                           Expanded(
                             child: Container(),
@@ -115,9 +134,7 @@ class PokemonDetailsScreen extends StatelessWidget {
                         ),
                         ...pokemon.stats.map((stat) {
                           var index = pokemon.stats.indexOf(stat);
-                          return PokemonStat(
-                              stat: stat,
-                              index: index);
+                          return PokemonStat(stat: stat, index: index);
                         }).toList()
                       ]),
                 )
@@ -128,10 +145,11 @@ class PokemonDetailsScreen extends StatelessWidget {
         floatingActionButton: Consumer<Pokemons>(
           builder: (context, pokemons, _) => FloatingActionButton(
             backgroundColor: const Color(0xFF3558CD),
-            onPressed: () async{
-              await pokemons.toggleFavorites(pokemon.name);
+            onPressed: () async {
+              await pokemons.toggleFavorites(pokemon);
             },
-            child:  Icon(pokemon.isFavorite ? Icons.favorite : Icons.favorite_border),
+            child: Icon(
+                pokemon.isFavorite ? Icons.favorite : Icons.favorite_border),
           ),
         ));
   }

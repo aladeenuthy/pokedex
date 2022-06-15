@@ -17,11 +17,26 @@ class _AllPokemonsState extends State<AllPokemons>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
-  late final Future _fetchData;
+
+  var isLoading = false;
+  Future? _fetchData;
+  final controller = ScrollController();
   @override
   void initState() {
     super.initState();
     _fetchData = context.read<Pokemons>().fetchFromApi();
+    controller.addListener(() async {
+      if (controller.position.maxScrollExtent == controller.offset &&
+          !isLoading) {
+        setState(() {
+          isLoading = true;
+        });
+        await context.read<Pokemons>().fetchFromApi();
+        setState(() {
+          isLoading = false;
+        });
+      }
+    });
   }
 
   @override
@@ -38,35 +53,67 @@ class _AllPokemonsState extends State<AllPokemons>
                 color: Color(0xFF3558CD),
               ),
             );
-          }
-          return ResponsiveBuilder(builder: (context, sizingInformation) {
-            return Consumer<Pokemons>(builder: (context, pokemonObj, _) {
-              return GridView.count(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                crossAxisCount: sizingInformation.deviceScreenType ==
-                        DeviceScreenType.tablet
-                    ? 4
-                    : 3,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                childAspectRatio:
-                    getValue(sizingInformation, orientation, mediaQuery),
-                children: [
-                  ...pokemonObj.pokemons
-                      .map((pokemon) => GestureDetector(
-                            onTap: () => Navigator.of(context).pushNamed(
-                                PokemonDetailsScreen.routeName,
-                                arguments: pokemon),
-                            child: PokemonCard(
-                              pokemon: pokemon,
-                            ),
-                          ))
-                      .toList()
-                ],
-              );
+          } else if (snapShot.hasData) {
+            return ResponsiveBuilder(builder: (context, sizingInformation) {
+              return Consumer<Pokemons>(builder: (context, pokemonObj, _) {
+                return GridView.builder(
+                  controller: controller,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: sizingInformation.deviceScreenType ==
+                              DeviceScreenType.tablet
+                          ? 4
+                          : 3,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                      childAspectRatio:
+                          getValue(sizingInformation, orientation, mediaQuery)),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                  itemCount: pokemonObj.pokemons.length + 1,
+                  itemBuilder: (_, index) {
+                    if (index == pokemonObj.pokemons.length) {
+                      return isLoading
+                          ? const Center(
+                              child: CircularProgressIndicator(
+                                  color: Color(0xFF3558CD)),
+                            )
+                          : Container();
+                    } else {
+                      return GestureDetector(
+                        onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (_) => PokemonDetailsScreen(
+                                    pokemon: pokemonObj.pokemons[index]))),
+                        child: PokemonCard(
+                          pokemon: pokemonObj.pokemons[index],
+                        ),
+                      );
+                    }
+                  },
+                );
+              });
             });
-          });
+          }
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                "Something went wrong",
+                style: TextStyle(fontSize: 20),
+              ),
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      primary: const Color(0xFF3558CD)),
+                  onPressed: () {
+                    setState(() {
+                      _fetchData = Provider.of<Pokemons>(context, listen: false)
+                          .fetchFromApi();
+                    });
+                  },
+                  child:
+                      const Text('Try again', style: TextStyle(fontSize: 17)))
+            ],
+          );
         });
   }
 }
